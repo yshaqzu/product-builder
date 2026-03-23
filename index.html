@@ -2,21 +2,38 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>복권 추첨기</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f8ff;
-            margin-top: 50px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        h1 {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        /* 복권 추첨기 */
+        .lottery-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .lottery-section h1 {
+            font-size: 28px;
             color: #333;
+            margin-bottom: 20px;
         }
 
         .numbers {
-            margin: 30px;
+            margin: 30px 0;
         }
 
         .ball {
@@ -31,7 +48,7 @@
             font-weight: bold;
         }
 
-        button {
+        .draw-btn {
             padding: 15px 30px;
             font-size: 18px;
             background-color: #4CAF50;
@@ -39,52 +56,181 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        button:hover {
+        .draw-btn:hover {
             background-color: #45a049;
+        }
+
+        /* 구분선 */
+        .divider {
+            width: 100%;
+            max-width: 500px;
+            border: none;
+            border-top: 1px solid #ddd;
+            margin-bottom: 60px;
+        }
+
+        /* 제휴 문의 폼 */
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-container h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #4CAF50;
+            font-size: 16px;
         }
     </style>
 </head>
-
 <body>
 
-<h1>🎰 복권 번호 추첨기</h1>
+    <!-- 복권 추첨기 -->
+    <section class="lottery-section">
+        <h1>🎰 복권 번호 추첨기</h1>
+        <div class="numbers" id="numbers">
+            <div class="ball">?</div>
+            <div class="ball">?</div>
+            <div class="ball">?</div>
+            <div class="ball">?</div>
+            <div class="ball">?</div>
+            <div class="ball">?</div>
+        </div>
+        <button class="draw-btn" onclick="drawNumbers()">번호 추첨하기</button>
+    </section>
 
-<div class="numbers" id="numbers">
-    <div class="ball">?</div>
-    <div class="ball">?</div>
-    <div class="ball">?</div>
-    <div class="ball">?</div>
-    <div class="ball">?</div>
-    <div class="ball">?</div>
-</div>
+    <hr class="divider">
 
-<button onclick="drawNumbers()">번호 추첨하기</button>
+    <!-- 제휴 문의 폼 -->
+    <div class="form-container">
+        <h2>제휴 문의</h2>
+        <p class="subtitle">제휴 관련 문의사항을 남겨주시면 검토 후 연락드리겠습니다.</p>
 
-<script>
-    function drawNumbers() {
-        let numbers = [];
+        <form id="contact-form" action="https://formspree.io/f/mpqygnzq" method="POST">
+            <label for="name">이름 / 회사명</label>
+            <input type="text" id="name" name="name" placeholder="홍길동 / (주)회사명" required>
 
-        while (numbers.length < 6) {
-            let num = Math.floor(Math.random() * 45) + 1;
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com" required>
 
-            if (!numbers.includes(num)) {
-                numbers.push(num);
+            <label for="type">문의 유형</label>
+            <select id="type" name="type" required>
+                <option value="" disabled selected>선택해주세요</option>
+                <option value="광고/마케팅 제휴">광고 / 마케팅 제휴</option>
+                <option value="콘텐츠 제휴">콘텐츠 제휴</option>
+                <option value="기술 협력">기술 협력</option>
+                <option value="기타">기타</option>
+            </select>
+
+            <label for="message">문의 내용</label>
+            <textarea id="message" name="message" placeholder="제휴 관련 내용을 자유롭게 작성해주세요." required></textarea>
+
+            <button type="submit">문의 보내기</button>
+        </form>
+
+        <div class="success-message" id="success-message">
+            문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.
+        </div>
+    </div>
+
+    <script>
+        function drawNumbers() {
+            let numbers = [];
+            while (numbers.length < 6) {
+                let num = Math.floor(Math.random() * 45) + 1;
+                if (!numbers.includes(num)) numbers.push(num);
+            }
+            numbers.sort((a, b) => a - b);
+
+            let balls = document.getElementsByClassName('ball');
+            for (let i = 0; i < 6; i++) {
+                balls[i].textContent = numbers[i];
             }
         }
 
-        numbers.sort(function(a, b) {
-            return a - b;
+        const form = document.getElementById('contact-form');
+        const successMessage = document.getElementById('success-message');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.ok) {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+            } else {
+                alert('전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
         });
-
-        let balls = document.getElementsByClassName("ball");
-
-        for (let i = 0; i < 6; i++) {
-            balls[i].textContent = numbers[i];
-        }
-    }
-</script>
+    </script>
 
 </body>
 </html>
