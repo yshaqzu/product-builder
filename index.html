@@ -3,100 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>복권 추첨기</title>
+    <title>StockNews - 주식 뉴스</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 50px 20px;
-        }
-
-        /* 복권 추첨기 */
-        .lottery-section {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .lottery-section h1 {
-            font-size: 28px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
             color: #333;
+        }
+
+        /* 헤더 */
+        header {
+            background-color: #0d1b2a;
+            color: white;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo span { color: #00c896; }
+
+        .header-date {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* 탭 */
+        .tabs {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 0;
+            padding: 0 40px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            color: #666;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tab:hover { color: #0d1b2a; }
+
+        .tab.active {
+            color: #0d1b2a;
+            border-bottom-color: #00c896;
+        }
+
+        /* 메인 콘텐츠 */
+        main {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .numbers {
-            margin: 30px 0;
-        }
-
-        .ball {
-            display: inline-block;
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            margin: 10px;
-            border-radius: 50%;
-            background-color: #ffcc00;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .draw-btn {
-            padding: 15px 30px;
+        .section-title {
             font-size: 18px;
-            background-color: #4CAF50;
+            font-weight: bold;
+            color: #0d1b2a;
+        }
+
+        .refresh-btn {
+            padding: 8px 16px;
+            background: #00c896;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
+            font-size: 13px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background 0.2s;
         }
 
-        .draw-btn:hover {
-            background-color: #45a049;
-        }
+        .refresh-btn:hover { background: #00a87e; }
 
-        /* 구분선 */
-        .divider {
-            width: 100%;
-            max-width: 500px;
-            border: none;
-            border-top: 1px solid #ddd;
+        /* 뉴스 그리드 */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
             margin-bottom: 60px;
         }
 
+        .news-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        .news-source {
+            font-size: 11px;
+            font-weight: bold;
+            color: #00c896;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .news-title {
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.5;
+            color: #0d1b2a;
+        }
+
+        .news-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: #999;
+            margin-top: auto;
+        }
+
+        /* 로딩 / 에러 */
+        .status-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+            font-size: 15px;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid #ddd;
+            border-top-color: #00c896;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-bottom: 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 구분선 */
+        .divider {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 0 0 60px;
+        }
+
         /* 제휴 문의 폼 */
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 0 20px 80px;
+        }
+
         .form-container {
             background: white;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 500px;
         }
 
         .form-container h2 {
-            font-size: 24px;
-            color: #333;
+            font-size: 22px;
+            color: #0d1b2a;
             margin-bottom: 8px;
         }
 
         .subtitle {
-            color: #777;
-            font-size: 14px;
+            color: #888;
+            font-size: 13px;
             margin-bottom: 28px;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #444;
             margin-bottom: 6px;
@@ -108,13 +229,13 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             outline: none;
             transition: border-color 0.2s;
         }
 
         input:focus, select:focus, textarea:focus {
-            border-color: #4CAF50;
+            border-color: #00c896;
         }
 
         textarea {
@@ -124,97 +245,179 @@
 
         button[type="submit"] {
             width: 100%;
-            padding: 14px;
-            background-color: #4CAF50;
+            padding: 13px;
+            background: #0d1b2a;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background 0.2s;
         }
 
-        button[type="submit"]:hover {
-            background-color: #45a049;
-        }
+        button[type="submit"]:hover { background: #1a2f45; }
 
         .success-message {
             display: none;
             text-align: center;
             padding: 20px;
-            color: #4CAF50;
-            font-size: 16px;
+            color: #00c896;
+            font-size: 15px;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #0d1b2a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 복권 추첨기 -->
-    <section class="lottery-section">
-        <h1>🎰 복권 번호 추첨기</h1>
-        <div class="numbers" id="numbers">
-            <div class="ball">?</div>
-            <div class="ball">?</div>
-            <div class="ball">?</div>
-            <div class="ball">?</div>
-            <div class="ball">?</div>
-            <div class="ball">?</div>
+    <header>
+        <div class="logo">Stock<span>News</span></div>
+        <div class="header-date" id="header-date"></div>
+    </header>
+
+    <nav class="tabs">
+        <div class="tab active" data-feed="top">전체</div>
+        <div class="tab" data-feed="us">미국 증시</div>
+        <div class="tab" data-feed="world">글로벌</div>
+        <div class="tab" data-feed="tech">테크</div>
+        <div class="tab" data-feed="crypto">암호화폐</div>
+    </nav>
+
+    <main>
+        <div class="section-header">
+            <div class="section-title" id="section-title">최신 주식 뉴스</div>
+            <button class="refresh-btn" onclick="loadNews()">새로고침</button>
         </div>
-        <button class="draw-btn" onclick="drawNumbers()">번호 추첨하기</button>
-    </section>
+        <div class="news-grid" id="news-grid">
+            <div class="status-msg"><div class="spinner"></div><br>뉴스를 불러오는 중...</div>
+        </div>
+    </main>
 
-    <hr class="divider">
+    <hr class="divider" style="max-width:1100px; margin: 0 auto 60px;">
 
-    <!-- 제휴 문의 폼 -->
-    <div class="form-container">
-        <h2>제휴 문의</h2>
-        <p class="subtitle">제휴 관련 문의사항을 남겨주시면 검토 후 연락드리겠습니다.</p>
+    <div class="form-wrapper">
+        <div class="form-container">
+            <h2>제휴 문의</h2>
+            <p class="subtitle">제휴 관련 문의사항을 남겨주시면 검토 후 연락드리겠습니다.</p>
 
-        <form id="contact-form" action="https://formspree.io/f/mpqygnzq" method="POST">
-            <label for="name">이름 / 회사명</label>
-            <input type="text" id="name" name="name" placeholder="홍길동 / (주)회사명" required>
+            <form id="contact-form" action="https://formspree.io/f/mpqygnzq" method="POST">
+                <label for="name">이름 / 회사명</label>
+                <input type="text" id="name" name="name" placeholder="홍길동 / (주)회사명" required>
 
-            <label for="email">이메일</label>
-            <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="example@email.com" required>
 
-            <label for="type">문의 유형</label>
-            <select id="type" name="type" required>
-                <option value="" disabled selected>선택해주세요</option>
-                <option value="광고/마케팅 제휴">광고 / 마케팅 제휴</option>
-                <option value="콘텐츠 제휴">콘텐츠 제휴</option>
-                <option value="기술 협력">기술 협력</option>
-                <option value="기타">기타</option>
-            </select>
+                <label for="type">문의 유형</label>
+                <select id="type" name="type" required>
+                    <option value="" disabled selected>선택해주세요</option>
+                    <option value="광고/마케팅 제휴">광고 / 마케팅 제휴</option>
+                    <option value="콘텐츠 제휴">콘텐츠 제휴</option>
+                    <option value="기술 협력">기술 협력</option>
+                    <option value="기타">기타</option>
+                </select>
 
-            <label for="message">문의 내용</label>
-            <textarea id="message" name="message" placeholder="제휴 관련 내용을 자유롭게 작성해주세요." required></textarea>
+                <label for="message">문의 내용</label>
+                <textarea id="message" name="message" placeholder="제휴 관련 내용을 자유롭게 작성해주세요." required></textarea>
 
-            <button type="submit">문의 보내기</button>
-        </form>
+                <button type="submit">문의 보내기</button>
+            </form>
 
-        <div class="success-message" id="success-message">
-            문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.
+            <div class="success-message" id="success-message">
+                문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.
+            </div>
         </div>
     </div>
 
-    <script>
-        function drawNumbers() {
-            let numbers = [];
-            while (numbers.length < 6) {
-                let num = Math.floor(Math.random() * 45) + 1;
-                if (!numbers.includes(num)) numbers.push(num);
-            }
-            numbers.sort((a, b) => a - b);
+    <footer>© 2026 StockNews. All rights reserved.</footer>
 
-            let balls = document.getElementsByClassName('ball');
-            for (let i = 0; i < 6; i++) {
-                balls[i].textContent = numbers[i];
+    <script>
+        const FEEDS = {
+            top:    'https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC,^DJI,^IXIC&region=US&lang=en-US',
+            us:     'https://feeds.finance.yahoo.com/rss/2.0/headline?s=AAPL,TSLA,NVDA,AMZN,GOOGL&region=US&lang=en-US',
+            world:  'https://feeds.finance.yahoo.com/rss/2.0/headline?s=^N225,^FTSE,^GDAXI&region=US&lang=en-US',
+            tech:   'https://feeds.finance.yahoo.com/rss/2.0/headline?s=META,MSFT,AMD,INTC,CRM&region=US&lang=en-US',
+            crypto: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=BTC-USD,ETH-USD,SOL-USD&region=US&lang=en-US',
+        };
+
+        const TITLES = {
+            top: '최신 주식 뉴스',
+            us: '미국 증시 뉴스',
+            world: '글로벌 시장 뉴스',
+            tech: '테크 뉴스',
+            crypto: '암호화폐 뉴스',
+        };
+
+        let currentFeed = 'top';
+
+        // 헤더 날짜
+        document.getElementById('header-date').textContent =
+            new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+        // 탭 이벤트
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFeed = tab.dataset.feed;
+                document.getElementById('section-title').textContent = TITLES[currentFeed];
+                loadNews();
+            });
+        });
+
+        async function loadNews() {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '<div class="status-msg"><div class="spinner"></div><br>뉴스를 불러오는 중...</div>';
+
+            const rssUrl = encodeURIComponent(FEEDS[currentFeed]);
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=12`;
+
+            try {
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+
+                if (data.status !== 'ok' || !data.items.length) {
+                    throw new Error('no data');
+                }
+
+                grid.innerHTML = '';
+                data.items.forEach(item => {
+                    const date = new Date(item.pubDate).toLocaleDateString('ko-KR', {
+                        month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    const card = document.createElement('a');
+                    card.className = 'news-card';
+                    card.href = item.link;
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                    card.innerHTML = `
+                        <div class="news-source">${item.author || data.feed.title || 'Yahoo Finance'}</div>
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-desc">${stripHtml(item.description)}</div>
+                        <div class="news-date">${date}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (e) {
+                grid.innerHTML = '<div class="status-msg">뉴스를 불러오지 못했습니다.<br><small>잠시 후 다시 시도해주세요.</small></div>';
             }
         }
 
-        const form = document.getElementById('contact-form');
-        const successMessage = document.getElementById('success-message');
+        function stripHtml(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html || '';
+            return tmp.textContent || tmp.innerText || '';
+        }
 
+        // 제휴 문의 폼
+        const form = document.getElementById('contact-form');
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
             const response = await fetch(form.action, {
@@ -222,14 +425,15 @@
                 body: new FormData(form),
                 headers: { 'Accept': 'application/json' }
             });
-
             if (response.ok) {
                 form.style.display = 'none';
-                successMessage.style.display = 'block';
+                document.getElementById('success-message').style.display = 'block';
             } else {
                 alert('전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             }
         });
+
+        loadNews();
     </script>
 
 </body>
