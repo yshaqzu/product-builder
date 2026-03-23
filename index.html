@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>복권 추첨기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .numbers {
+            margin: 30px;
+        }
+
+        .ball {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            margin: 10px;
+            border-radius: 50%;
+            background-color: #ffcc00;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🎰 복권 번호 추첨기</h1>
+
+<div class="numbers" id="numbers">
+    <div class="ball">?</div>
+    <div class="ball">?</div>
+    <div class="ball">?</div>
+    <div class="ball">?</div>
+    <div class="ball">?</div>
+    <div class="ball">?</div>
+</div>
+
+<button onclick="drawNumbers()">번호 추첨하기</button>
+
+<script>
+    function drawNumbers() {
+        let numbers = [];
+
+        while (numbers.length < 6) {
+            let num = Math.floor(Math.random() * 45) + 1;
+
+            if (!numbers.includes(num)) {
+                numbers.push(num);
+            }
+        }
+
+        numbers.sort(function(a, b) {
+            return a - b;
+        });
+
+        let balls = document.getElementsByClassName("ball");
+
+        for (let i = 0; i < 6; i++) {
+            balls[i].textContent = numbers[i];
+        }
+    }
+</script>
+
+</body>
+</html>
